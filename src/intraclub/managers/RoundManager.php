@@ -1,9 +1,8 @@
 <?php
 namespace intraclub\managers;
 
-use intraclub\common\Utilities;
-use intraclub\repositories;
 use intraclub\repositories\RoundRepository;
+use intraclub\repositories\SeasonRepository;
 
 class RoundManager {
     /**
@@ -12,13 +11,17 @@ class RoundManager {
      * @var RoundRepository
      */
     protected $roundRepository;
-
+    protected $seasonRepository;
 
     public function __construct($db){
         $this->roundRepository = new RoundRepository($db);
+        $this->seasonRepository = new SeasonRepository($db);
     }
 
     public function getAll($seasonId = null){
+        if(empty($seasonId)){
+            $seasonId = $this->seasonRepository->getCurrentSeasonId();
+        }
         return $this->roundRepository->getAll($seasonId);
     }
 

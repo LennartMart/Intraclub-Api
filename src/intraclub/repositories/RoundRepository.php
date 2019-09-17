@@ -9,8 +9,8 @@ class RoundRepository {
      */
     protected $db;
 
-    protected $roundQuery = "SELECT id, speeldagnummer AS 'number', gemiddeld_verliezend AS averageAbsent, 
-        datum AS 'date', is_berekend AS calculated
+    protected $roundQuery = "SELECT id, speeldagnummer AS number, ROUND(gemiddeld_verliezend,2) AS averageAbsent, 
+        datum AS date, is_berekend AS calculated
         FROM intra_speeldagen";
 
     public function __construct($db){
@@ -21,7 +21,7 @@ class RoundRepository {
         if(empty($seasonId)){
             return null;
         }
-        $stmt = $this->db->prepare($this->roundQuery . " WHERE seizoen_id = ? ORDER BY id  ASC;");
+        $stmt = $this->db->prepare($this->roundQuery . " WHERE seizoen_id = ? ORDER BY id ASC;");
 
         $stmt->execute([$seasonId]); 
         return $stmt->fetchAll();

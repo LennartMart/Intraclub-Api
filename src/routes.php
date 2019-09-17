@@ -24,9 +24,12 @@ return function (App $app) {
         $data = $matchManager->getAll();
         return $response->withJson($data);
     });
-    $app->get('/rounds', function (Request $request, Response $response, array $args) {
+    $app->get('/rounds', function (Request $request, Response $response) {
         $roundManager = new RoundManager($this->db);
-        $data = $roundManager->getAll();
+        $queryParams = $request->getQueryParams();
+        $seasonId = $queryParams["seasonId"];
+        
+        $data = $roundManager->getAll($seasonId);
         return $response->withJson($data);
     });
     $app->get('/rankings', function (Request $request, Response $response, array $args) {

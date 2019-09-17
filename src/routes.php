@@ -39,10 +39,7 @@ return function (App $app) {
     });
     $app->get('/rounds/{id}', function (Request $request, Response $response, array $args) {
         $roundManager = new RoundManager($this->db);
-        $matchManager = new MatchManager($this->db);
-
-        $data = $roundManager->getById($args['id']);
-        $data["matches"] = $matchManager->getAllByRoundId($args["id"]);
+        $data = $roundManager->getByIdWithMatches($args['id']);
         return $response->withJson($data);
     });
 };

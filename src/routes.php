@@ -16,12 +16,9 @@ return function (App $app) {
     $app->get('/players/{id}', function (Request $request, Response $response, array $args) {
         $id = $args['id'];
         $playerManager = new PlayerManager($this->db);
-        $data = $playerManager->getById($id);
-        return $response->withJson($data);
-    });
-    $app->get('/matches', function (Request $request, Response $response, array $args) {
-        $matchManager = new MatchManager($this->db);
-        $data = $matchManager->getAll();
+        $queryParams = $request->getQueryParams();
+        $seasonId = $queryParams["seasonId"];
+        $data = $playerManager->getByIdWithSeasonInfo($id, $seasonId);
         return $response->withJson($data);
     });
     $app->get('/rounds', function (Request $request, Response $response) {

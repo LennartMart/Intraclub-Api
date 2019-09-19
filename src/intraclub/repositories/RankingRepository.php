@@ -39,4 +39,18 @@ class RankingRepository {
         $stmt->execute([$roundId]);
         return $stmt->fetchAll();
     }
+
+    public function getRankingHistoryByPlayerAndSeason($playerId, $seasonId){
+        $query = "SELECT * FROM (
+                    SELECT ROW_NUMBER() OVER (PARTITION BY ISPS.speeldag_id ORDER BY ISPS.gemiddelde DESC) AS rank, 
+                    ISPS.speler_id AS id, ISPS.gemiddelde AS average, ISPS.speeldag_id, ISPEEL.speeldagnummer, ISPEEL.datum 
+                    FROM intra_spelerperspeeldag ISPS 
+                    INNER JOIN intra_speeldagen ISPEEL ON ISPEEL.id = ISPS.speeldag_id 
+                    WHERE ISPEEL.seizoen_id = ? 
+                    ORDER BY ISPEEL.Id, rank ) AS FullRanking 
+                    WHERE id = ?";
+        $stmt = $this->db->prepare($query);
+        $stmt->execute([$seasonId, $playerId]);
+        return $stmt->fetchAll();
+    }
 }

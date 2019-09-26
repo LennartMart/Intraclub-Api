@@ -20,7 +20,8 @@ class MatchRepository {
                     PL1H.Id as home_firstPlayer_Id, PL1H.voornaam AS home_firstPlayer_firstName, PL1H.naam AS home_firstPlayer_name,
                     PL2H.Id as home_secondPlayer_Id, PL2H.voornaam AS home_secondPlayer_firstName, PL2H.naam AS home_secondPlayer_name,
                     PL1A.Id as away_firstPlayer_Id, PL1A.voornaam AS away_firstPlayer_firstName, PL1A.naam AS away_firstPlayer_name,
-                    PL2A.Id as away_secondPlayer_Id, PL2A.voornaam AS away_secondPlayer_firstName, PL2A.naam AS away_secondPlayer_name
+                    PL2A.Id as away_secondPlayer_Id, PL2A.voornaam AS away_secondPlayer_firstName, PL2A.naam AS away_secondPlayer_name,
+                    ISP.Id as roundId, ISP.speeldagnummer AS roundNumber
                     FROM intra_wedstrijden IW 
                     INNER JOIN intra_speeldagen ISP ON ISP.id = IW.speeldag_id
                     INNER JOIN intra_spelers PL1H ON PL1H.id =  IW.team1_speler1

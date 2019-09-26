@@ -51,7 +51,7 @@ class RoundRepository {
         if(empty($id)){
             return null;
         }
-        $stmt = $this->db->prepare("SELECT ISP.id, ISP.speeldagnummer AS number, ROUND(ISP.gemiddeld_verliezend,2) AS averageAbsent, 
+        $stmt = $this->db->prepare("SELECT ISP.id AS roundId, ISP.speeldagnummer AS roundNumber, ROUND(ISP.gemiddeld_verliezend,2) AS averageAbsent, 
             ISP.datum AS date, ISP.is_berekend AS calculated, set1_1 AS firstSet_home, set1_2 AS firstSet_away, set2_1 AS secondSet_home, set2_2 AS secondSet_away, 
             set3_1 AS thirdSet_home, set3_2 AS thirdSet_away,
             PL1H.Id as home_firstPlayer_Id, PL1H.voornaam AS home_firstPlayer_firstName, PL1H.naam AS home_firstPlayer_name,

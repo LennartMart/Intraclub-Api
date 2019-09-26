@@ -41,7 +41,11 @@ class Utilities
                 "home" => intval($match["thirdSet_home"]),
                 "away" => intval($match["thirdSet_away"]),
                 "played" => $match["thirdSet_home"] != "0" &&  $match["thirdSet_away"] != "0"
-            )         
+            ),
+            "round" => array(
+                "id" => intval($match["roundId"]),
+                "number" => intval($match["roundNumber"])
+            ),                     
         );
     }
 }

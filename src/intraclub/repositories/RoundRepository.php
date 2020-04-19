@@ -64,6 +64,7 @@ class RoundRepository {
             INNER JOIN intra_spelers PL2H ON PL2H.id =  IW.team1_speler2
             INNER JOIN intra_spelers PL1A ON PL1A.id =  IW.team2_speler1
             INNER JOIN intra_spelers PL2A ON PL2A.id =  IW.team2_speler2 WHERE ISP.id=?
+            ORDER BY IW.Id ASC;
         ");
         $stmt->execute([$id]); 
         return $stmt->fetchAll();

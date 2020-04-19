@@ -1,7 +1,6 @@
 <?php
 namespace intraclub\managers;
-
-use intraclub\common\Utilities;
+use intraclub\repositories\SeasonRepository;
 
 class MatchManager {
     /**
@@ -10,6 +9,7 @@ class MatchManager {
      * @var PDO
      */
     protected $db;
+    protected $seasonRepository;
     protected $matchQuery = "
     SELECT IW.id, speeldag_id AS roundId,
         set1_1 AS firstSet_home, set1_2 AS firstSet_away, set2_1 AS secondSet_home, set2_2 AS secondSet_away, 
@@ -29,10 +29,11 @@ class MatchManager {
 
     public function __construct($db){
         $this->db = $db;
+        $this->seasonRepository = new SeasonRepository($db);
     }
 
     public function getAllBySeasonId($seasonId = null){        
-        $currentSeasonId = Utilities::getCurrentSeasonId($this->db);
+        $currentSeasonId = $this->checkSeason($seasonId);
         $stmt = $this->db->prepare($this->matchQuery . " WHERE ISEASON.Id=?");
         $stmt->execute([$currentSeasonId]); 
         return $stmt->fetchAll();
@@ -42,5 +43,11 @@ class MatchManager {
         $stmt = $this->db->prepare($this->matchQuery . " WHERE ISP.Id=?");
         $stmt->execute([$roundId]); 
         return $stmt->fetchAll();
+    }
+    private function checkSeason($seasonId){
+        if(empty($seasonId)){
+            return $this->seasonRepository->getCurrentSeasonId();
+        }        
+        return $seasonId;
     }
 }

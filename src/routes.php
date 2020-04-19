@@ -1,11 +1,10 @@
 <?php
+use intraclub\managers\PlayerManager;
+use intraclub\managers\RankingManager;
+use intraclub\managers\RoundManager;
 use Slim\App;
 use Slim\Http\Request;
 use Slim\Http\Response;
-use intraclub\managers\PlayerManager;
-use intraclub\managers\MatchManager;
-use intraclub\managers\RoundManager;
-use intraclub\managers\RankingManager;
 
 return function (App $app) {
     $app->get('/players', function (Request $request, Response $response, array $args) {
@@ -25,13 +24,38 @@ return function (App $app) {
         $roundManager = new RoundManager($this->db);
         $queryParams = $request->getQueryParams();
         $seasonId = $queryParams["seasonId"];
-        
+
         $data = $roundManager->getAll($seasonId);
         return $response->withJson($data);
     });
     $app->get('/rankings', function (Request $request, Response $response, array $args) {
+        $items = $request->getQueryParam('$top');
         $rankingManager = new RankingManager($this->db);
-        $data = $rankingManager->get();
+        $data = $rankingManager->get($items, true, true, true, true);
+        return $response->withJson($data);
+    });
+    $app->get('/rankings/general', function (Request $request, Response $response, array $args) {
+        $items = $request->getQueryParam('$top');
+        $rankingManager = new RankingManager($this->db);
+        $data = $rankingManager->get($items, true);
+        return $response->withJson($data);
+    });
+    $app->get('/rankings/women', function (Request $request, Response $response, array $args) {
+        $items = $request->getQueryParam('$top');
+        $rankingManager = new RankingManager($this->db);
+        $data = $rankingManager->get($items, false, true);
+        return $response->withJson($data);
+    });
+    $app->get('/rankings/veterans', function (Request $request, Response $response, array $args) {
+        $items = $request->getQueryParam('$top');
+        $rankingManager = new RankingManager($this->db);
+        $data = $rankingManager->get($items, false, false, true);
+        return $response->withJson($data);
+    });
+    $app->get('/rankings/recreants', function (Request $request, Response $response, array $args) {
+        $items = $request->getQueryParam('$top');
+        $rankingManager = new RankingManager($this->db);
+        $data = $rankingManager->get($items, false, false, false, true);
         return $response->withJson($data);
     });
     $app->get('/rounds/{id}', function (Request $request, Response $response, array $args) {
@@ -40,5 +64,3 @@ return function (App $app) {
         return $response->withJson($data);
     });
 };
-
-

@@ -1,7 +1,9 @@
 <?php
+
 namespace intraclub\repositories;
 
-class RoundRepository {
+class RoundRepository
+{
     /**
      * Database connection
      *
@@ -9,46 +11,52 @@ class RoundRepository {
      */
     protected $db;
 
-    protected $roundQuery = "SELECT id, speeldagnummer AS number, ROUND(gemiddeld_verliezend,2) AS averageAbsent, 
-        datum AS date, is_berekend AS calculated
-        FROM intra_speeldagen";
+    protected $roundQuery = "SELECT ISP.id, ISP.speeldagnummer AS number, ROUND(ISP.gemiddeld_verliezend,2) AS averageAbsent, 
+    ISP.datum AS date, ISP.is_berekend AS calculated, (SELECT COUNT(IW.id) FROM intra_wedstrijden IW where IW.speeldag_id = ISP.id) as matches
+    FROM intra_speeldagen ISP";
 
-    public function __construct($db){
+    public function __construct($db)
+    {
         $this->db = $db;
     }
 
-    public function getAll($seasonId = null){
-        if(empty($seasonId)){
+    public function getAll($seasonId = null)
+    {
+        if (empty($seasonId)) {
             return null;
         }
-        $stmt = $this->db->prepare($this->roundQuery . " WHERE seizoen_id = ? ORDER BY id ASC;");
+        $stmt = $this->db->prepare($this->roundQuery . " WHERE ISP.seizoen_id = ? ORDER BY ISP.id ASC;");
 
-        $stmt->execute([$seasonId]); 
+        $stmt->execute([$seasonId]);
         return $stmt->fetchAll();
     }
 
-    public function getById($id){   
-        $stmt = $this->db->prepare($this->roundQuery . " WHERE id=?");
-        $stmt->execute([$id]); 
+    public function getById($id)
+    {
+        $stmt = $this->db->prepare($this->roundQuery . " WHERE ISP.id=?");
+        $stmt->execute([$id]);
         return $stmt->fetch();
     }
-    public function getBySeasonAndNumber($seasonId, $number){   
-        $stmt = $this->db->prepare($this->roundQuery . " WHERE seizoen_id = :seasonId and speeldagnummer = :roundNumber;");
-        $stmt->execute(array(':seasonId' => $seasonId, ':roundNumber' =>$number));
+    public function getBySeasonAndNumber($seasonId, $number)
+    {
+        $stmt = $this->db->prepare($this->roundQuery . " WHERE ISP.seizoen_id = :seasonId and ISP.speeldagnummer = :roundNumber;");
+        $stmt->execute(array(':seasonId' => $seasonId, ':roundNumber' => $number));
         return $stmt->fetch();
     }
 
-    public function getLastCalculated($seasonId = null){
-        if(empty($seasonId)){
+    public function getLastCalculated($seasonId = null)
+    {
+        if (empty($seasonId)) {
             return null;
         }
-        $stmt = $this->db->prepare($this->roundQuery . " WHERE seizoen_id=? AND is_berekend = 1 ORDER BY speeldagnummer DESC LIMIT 1;");
-        $stmt->execute([$seasonId]); 
+        $stmt = $this->db->prepare($this->roundQuery . " WHERE ISP.seizoen_id=? AND ISP.is_berekend = 1 ORDER BY ISP.speeldagnummer DESC LIMIT 1;");
+        $stmt->execute([$seasonId]);
         return $stmt->fetch();
     }
 
-    public function getWithMatches($id){
-        if(empty($id)){
+    public function getWithMatches($id)
+    {
+        if (empty($id)) {
             return null;
         }
         $stmt = $this->db->prepare("SELECT ISP.id AS roundId, ISP.speeldagnummer AS roundNumber, ROUND(ISP.gemiddeld_verliezend,2) AS averageAbsent, 
@@ -66,7 +74,7 @@ class RoundRepository {
             INNER JOIN intra_spelers PL2A ON PL2A.id =  IW.team2_speler2 WHERE ISP.id=?
             ORDER BY IW.Id ASC;
         ");
-        $stmt->execute([$id]); 
+        $stmt->execute([$id]);
         return $stmt->fetchAll();
     }
 }

@@ -3,6 +3,33 @@ namespace intraclub\common;
 
 class Utilities
 {
+    public static function mapToPlayerStatisticsObject($playerStats){
+        return array(
+            "id" => $playerStats["id"],
+            "firstName" => $playerStats["firstname"],
+            "name" => $playerStats["name"],
+            "statistics" => array(
+                "points" => array(
+                    "won" => intval($playerStats["wonPoints"]),
+                    "lost" => $playerStats["playedPoints"] - $playerStats["wonPoints"],
+                    "total" => intval($playerStats["playedPoints"])
+                ),
+                "sets" => array(
+                    "won" => intval($playerStats["wonSets"]),
+                    "lost" => $playerStats["playedSets"] - $playerStats["wonSets"],
+                    "total" => intval($playerStats["playedSets"]) 
+                ),
+                "matches" => array(
+                    "won" => intval($playerStats["wonMatches"]),
+                    "lost" => $playerStats["playedMatches"] - $playerStats["wonMatches"],
+                    "total" => intval($playerStats["playedMatches"]) 
+                ),
+                "rounds" => array(
+                    "present" => intval($playerStats["roundsPresent"])
+                )
+            )
+        );
+    }
     public static function mapToMatchObject($match){
         return array(
             "home" => array (
@@ -49,7 +76,3 @@ class Utilities
         );
     }
 }
-
-
-
-?>

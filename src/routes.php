@@ -1,7 +1,9 @@
 <?php
+
 use intraclub\managers\PlayerManager;
 use intraclub\managers\RankingManager;
 use intraclub\managers\RoundManager;
+use intraclub\managers\SeasonManager;
 use Slim\App;
 use Slim\Http\Request;
 use Slim\Http\Response;
@@ -61,6 +63,11 @@ return function (App $app) {
     $app->get('/rounds/{id}', function (Request $request, Response $response, array $args) {
         $roundManager = new RoundManager($this->db);
         $data = $roundManager->getByIdWithMatches($args['id']);
+        return $response->withJson($data);
+    });
+    $app->get('/seasons/latest/statistics', function (Request $request, Response $response, array $args) {
+        $seasonManager = new SeasonManager($this->db);
+        $data = $seasonManager->getStatistics();
         return $response->withJson($data);
     });
 };

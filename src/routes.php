@@ -8,7 +8,63 @@ use Slim\App;
 use Slim\Http\Request;
 use Slim\Http\Response;
 
+define('_JEXEC', 1);
+if (file_exists('/home/bclandegem/domains/bclandegem.be/public_html'. '/defines.php'))
+{
+    include_once '/home/bclandegem/domains/bclandegem.be/public_html' . '/defines.php';
+}
+if (!defined('_JDEFINES'))
+{
+    define('JPATH_BASE', '/home/bclandegem/domains/bclandegem.be/public_html');
+    require_once JPATH_BASE . '/includes/defines.php';
+}
+require_once JPATH_BASE . '/includes/framework.php';
+
+function checkAccessRights(){
+    $joomla_app = JFactory::getApplication('site');
+    $joomla_app->initialise();
+    $user = JFactory::getUser();
+    $authorisedViewLevels = $user->getAuthorisedViewLevels();
+    //5 = id intrclub access level
+    if( !in_array(5,$authorisedViewLevels)){
+        die("Onvoldoende rechten !");
+    }
+
+}
+
 return function (App $app) {
+
+    $app->post('/seasons', function (Request $request, Response $response, array $args) {
+        checkAccessRights();
+        return "hello";
+    });
+    $app->post('/rounds', function (Request $request, Response $response, array $args) {
+        checkAccessRights();
+        return "hello";
+    });
+    $app->post('/matches', function (Request $request, Response $response, array $args) {
+        checkAccessRights();
+        return "hello";
+    });
+    $app->post('/players', function (Request $request, Response $response, array $args) {
+        checkAccessRights();
+        return "hello";
+    });
+    $app->post('/rounds/calculate', function (Request $request, Response $response, array $args) {
+        checkAccessRights();
+        return "hello";
+    });
+
+    $app->put('/players/{id}', function (Request $request, Response $response, array $args) {
+        checkAccessRights();
+        return "hello";
+    });
+
+    $app->put('/matches/{id}', function (Request $request, Response $response, array $args) {
+        checkAccessRights();
+        return "hello";
+    });
+
     $app->get('/players', function (Request $request, Response $response, array $args) {
         $playerManager = new PlayerManager($this->db);
         $data = $playerManager->getAll();

@@ -4,6 +4,8 @@ namespace intraclub\managers;
 
 use intraclub\common\Utilities;
 use intraclub\repositories\SeasonRepository;
+use intraclub\repositories\StatisticsRepository;
+
 
 class SeasonManager
 {
@@ -14,15 +16,20 @@ class SeasonManager
      */
     protected $db;
     protected $rankingManager;
-    protected $playerManager;
     protected $seasonRepository;
+    /**
+     *Statistics Repository
+     *
+     * @var StatisticsRepository
+     */
+    protected $statisticsRepository;
 
     public function __construct($db)
     {
         $this->db = $db;
         $this->rankingManager = new RankingManager($this->db);
-        $this->playerManager = new PlayerManager($this->db);
         $this->seasonRepository = new SeasonRepository($this->db);
+        $this->statisticsRepository = new StatisticsRepository($this->db);
     }
 
     public function getStatistics($seasonId = null)
@@ -47,40 +54,15 @@ class SeasonManager
         $previousSeasonId = $this->seasonRepository->getCurrentSeasonId();
 
         //2. Insert new season
-        $insertSeasonQuery = "INSERT INTO intra_seizoen (seizoen) VALUES (?)";
-        $insertStmt = $this->db->prepare($insertSeasonQuery);
-        $insertStmt->execute([$period]);
-        $newSeasonId = $this->db->lastInsertId();
+        $newSeasonId = $this->seasonRepository->create($period);    
 
-        //3. Insert playerPerSeason Record for every player
-        $players = $this->playerManager->getAll(false);
-
-        $insertPlayerSeasonQuery = "INSERT INTO intra_spelerperseizoen
-            SET
-                speler_id = ?,
-                seizoen_id = ?,
-                basispunten = ?,
-                gespeelde_sets = 0,
-                gewonnen_sets = 0,
-                gespeelde_punten = 0,
-                gewonnen_punten = 0
-                ";
-        foreach ($players as $player) {
-            $insertPlayerSeasonStmt = $this->db->prepare($insertPlayerSeasonQuery);
-            $insertPlayerSeasonStmt->execute([$player["id"], $newSeasonId, 19]);
-        }
-
-        //4. Based on ranking -> Add some points
+        //3. Insert playerPerSeason Record for every player & Based on ranking -> Add some points
         $ranking = $this->rankingManager->get($previousSeasonId);
 
         $reversedRanking = array_reverse($ranking);
-        $addedBasePoints = 19.0001;
-        $updatePlayerSeasonQuery = "UPDATE intra_spelerperseizoen
-            SET basispunten = ?
-            WHERE speler_id = ? AND seizoen_id = ?";
+        $addedBasePoints = 19.000;
         foreach ($reversedRanking as $rankedPlayer) {
-            $updatePlayerSeasonStmt = $this->db->prepare($updatePlayerSeasonQuery);
-            $updatePlayerSeasonStmt->execute([$addedBasePoints, $rankedPlayer["id"], $newSeasonId]);
+            $this->statisticsRepository->createSeasonStatistics($newSeasonId, $rankedPlayer["id"], $addedBasePoints);
             $addedBasePoints += 0.0001;
         }
     }

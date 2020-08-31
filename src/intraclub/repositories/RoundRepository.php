@@ -31,6 +31,16 @@ class RoundRepository
         return $stmt->fetchAll();
     }
 
+    /*
+    *   Creates a new Round
+    *   Needs validation before executing!
+    */
+    public function create($seasonId, $date, $roundNumber){
+
+        $stmt = $this->db->prepare("INSERT INTO intra_speeldagen (seizoen_id, datum, speeldagnummer, gemiddeld_verliezend, is_berekend) VALUES (?, ?, ?, 0, 0)");
+        $stmt->bind_param("isi", $seasonId, $date, $roundNumber);
+        return $stmt->execute();
+    }
     public function getById($id)
     {
         $stmt = $this->db->prepare($this->roundQuery . " WHERE ISP.id=?");
@@ -41,6 +51,16 @@ class RoundRepository
     {
         $stmt = $this->db->prepare($this->roundQuery . " WHERE ISP.seizoen_id = :seasonId and ISP.speeldagnummer = :roundNumber;");
         $stmt->execute(array(':seasonId' => $seasonId, ':roundNumber' => $number));
+        return $stmt->fetch();
+    }
+
+    public function getLast($seasonId = null)
+    {
+        if (empty($seasonId)) {
+            return null;
+        }
+        $stmt = $this->db->prepare($this->roundQuery . " WHERE ISP.seizoen_id=? ORDER BY ISP.speeldagnummer DESC LIMIT 1;");
+        $stmt->execute([$seasonId]);
         return $stmt->fetch();
     }
 

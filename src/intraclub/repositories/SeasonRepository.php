@@ -36,4 +36,11 @@ class SeasonRepository
         $stmt->execute([$seasonId]);
         return $stmt->fetchAll();
     }
+
+    public function create($period){
+        $insertSeasonQuery = "INSERT INTO intra_seizoen (seizoen) VALUES (?)";
+        $insertStmt = $this->db->prepare($insertSeasonQuery);
+        $insertStmt->execute([$period]);
+        return $this->db->lastInsertId();
+    }
 }

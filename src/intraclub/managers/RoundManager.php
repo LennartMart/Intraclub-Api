@@ -19,6 +19,11 @@ class RoundManager {
         $this->seasonRepository = new SeasonRepository($db);
     }
 
+    public function create($date){
+        $currentSeasonId = $this->seasonRepository->getCurrentSeasonId();
+        $round = $this->roundRepository->getLast($currentSeasonId);
+        $this->roundRepository->create($currentSeasonId, $date, $round["roundNumber"]);
+    }
     public function getByIdWithMatches($id){
         $roundInformation = $this->roundRepository->getWithMatches($id);
         $response = array();

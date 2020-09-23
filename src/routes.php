@@ -36,11 +36,23 @@ return function (App $app) {
 
     $app->post('/seasons', function (Request $request, Response $response, array $args) {
         checkAccessRights();
-        return "hello";
+        $seasonManager = new SeasonManager($this->db);
+
+        $postArr = $request->getParsedBody();
+        $period = $postArr["period"];
+
+        //$seasonManager->create($period);
+        return $response;
     });
     $app->post('/rounds', function (Request $request, Response $response, array $args) {
         checkAccessRights();
-        return "hello";
+        $roundManager = new RoundManager($this->db);
+
+        $postArr = $request->getParsedBody();
+        $date = $postArr["date"];
+        
+        //$roundManager->create($date);
+        return $response;
     });
     $app->post('/matches', function (Request $request, Response $response, array $args) {
         checkAccessRights();

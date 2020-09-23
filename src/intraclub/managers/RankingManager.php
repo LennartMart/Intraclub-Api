@@ -45,8 +45,8 @@ class RankingManager
         $ranking = $this->rankingRepository->getRankingAfterRound($round["id"]);
         $previousRanking = array();
 
-        if ($round["number"] > 1) {
-            $previousRound = $this->roundRepository->getBySeasonAndNumber($seasonId, $round["number"] - 1);
+        if ($round["roundNumber"] > 1) {
+            $previousRound = $this->roundRepository->getBySeasonAndNumber($seasonId, $round["roundNumber"] - 1);
             $previousRanking = $this->rankingRepository->getRankingAfterRound($previousRound["id"]);
         }
         //Build the rankings

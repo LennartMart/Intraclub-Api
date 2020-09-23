@@ -31,7 +31,7 @@ class StatisticsRepository {
         $insertPlayerSeasonStmt->execute([$playerId, $seasonId, $basePoints]);
     }
 
-    public function updateSeasonStatistics($seasonId, $playerId, $playedSets, $setsWon, $playedPoints, $pointsWon, $playedMatches, $matchesWon){
+    public function updateSeasonStatistics($seasonId, $playerId, $setsPlayed, $setsWon, $pointsPlayed, $pointsWon, $matchesPlayed, $matchesWon){
         $updatePlayerSeasonStmt = $this->db->prepare("UPDATE intra_spelerperseizoen
             SET
                 gespeelde_sets = ?,
@@ -43,7 +43,7 @@ class StatisticsRepository {
 
             WHERE speler_id = ? AND seizoen_id = ?");
 
-        $stmt->bind_param("iiiiiiii", $playedSets, $setsWon, $playedPoints, $pointsWon, $playedMatches, $matchesWon, $playerId, $seasonId);
+        $stmt->bind_param("iiiiiiii", $setsPlayed, $setsWon, $pointsPlayed, $pointsWon, $matchesPlayed, $matchesWon, $playerId, $seasonId);
         return $stmt->execute();
     }
 

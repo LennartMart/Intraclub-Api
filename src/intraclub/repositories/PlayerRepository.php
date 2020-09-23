@@ -34,8 +34,8 @@ class PlayerRepository {
         $query = "
         SELECT IPLAYER.id, IPLAYER.voornaam AS firstname, IPLAYER.naam AS name, IPLAYER.is_lid AS member,
             IPLAYER.geslacht AS gender, IPLAYER.jeugd AS youth, IPLAYER.is_veteraan AS veteran , IPLAYER.klassement AS ranking,
-            ISPS.basispunten AS basePoints, ISPS.gespeelde_sets AS playedSets, ISPS.gewonnen_sets AS wonSets, ISPS.gespeelde_punten AS playedPoints,
-            ISPS.gewonnen_punten AS wonPoints, ISPS.gespeelde_matchen as playedMatches, ISPS.gewonnen_matchen AS wonMatches,
+            ISPS.basispunten AS basePoints, ISPS.gespeelde_sets AS setsPlayed, ISPS.gewonnen_sets AS setsWon, ISPS.gespeelde_punten AS pointsPlayed,
+            ISPS.gewonnen_punten AS pointsWon, ISPS.gespeelde_matchen as matchesPlayed, ISPS.gewonnen_matchen AS matchesWon,
             ISPS.speeldagen_aanwezig AS roundsPresent
             FROM intra_spelers IPLAYER
             INNER JOIN intra_spelerperseizoen ISPS ON ISPS.speler_id = IPLAYER.Id

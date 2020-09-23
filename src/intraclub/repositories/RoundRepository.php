@@ -11,7 +11,7 @@ class RoundRepository
      */
     protected $db;
 
-    protected $roundQuery = "SELECT ISP.id, ISP.speeldagnummer AS number, ROUND(ISP.gemiddeld_verliezend,2) AS averageAbsent, 
+    protected $roundQuery = "SELECT ISP.id, ISP.speeldagnummer AS roundNumber, ROUND(ISP.gemiddeld_verliezend,2) AS averageAbsent, 
     ISP.datum AS date, ISP.is_berekend AS calculated, (SELECT COUNT(IW.id) FROM intra_wedstrijden IW where IW.speeldag_id = ISP.id) as matches
     FROM intra_speeldagen ISP";
 

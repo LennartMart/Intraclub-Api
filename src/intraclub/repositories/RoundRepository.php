@@ -41,6 +41,17 @@ class RoundRepository
         $stmt->bind_param("isi", $seasonId, $date, $roundNumber);
         return $stmt->execute();
     }
+
+    public function update($id, $averageAbsent){
+        $updateRoundstmt = $this->db->prepare("UPDATE intra_speeldagen
+        SET
+            gemiddeld_verliezend = ?,
+            is_berekend = 1
+        WHERE id = ?");
+
+        $updateRoundstmt->bind_param("ii", $averageAbsent, $id);
+        return $updateRoundstmt->execute();
+    }
     public function getById($id)
     {
         $stmt = $this->db->prepare($this->roundQuery . " WHERE ISP.id=?");

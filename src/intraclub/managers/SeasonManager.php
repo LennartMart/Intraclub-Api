@@ -72,14 +72,12 @@ class SeasonManager
         $ranking = $this->rankingManager->get($previousSeasonId);
 
         $reversedRanking = array_reverse($ranking);
-        $addedBasePoints = 19.000;
+        $basePoints = 19.000;
         foreach ($reversedRanking as $rankedPlayer) {
-            $this->statisticsRepository->createSeasonStatistics($newSeasonId, $rankedPlayer["id"], $addedBasePoints);
-            $addedBasePoints += 0.0001;
+            $this->statisticsRepository->createSeasonStatistics($newSeasonId, $rankedPlayer["id"], $basePoints);
+            $basePoints += 0.0001;
         }
     }
-
-
 
     public function calculateCurrentSeason()
     {
@@ -98,15 +96,17 @@ class SeasonManager
 
             $matches = $this->matchRepository->getAllByRoundId($round["id"]);
             foreach ($matches as $match) {
-                //TODO
-                $score_array = Utilities::calculateMatchStatistics();
+                $score_array = Utilities::calculateMatchStatistics($match["home_firstPlayer_Id"], $match["home_secondPlayer_Id"], 
+                    $match["away_firstPlayer_Id"], $match["away_secondPlayer_Id"], 
+                    $match["firstSet_home"], $match["firstSet_away"], $match["secondSet_home"], 
+                    $match["secondSet_away"], $match["thirdSet_home"], $match["thirdSet_away"]);
+
                 $averageLosers += $score_array['averagePointsLosingTeam'];
                 $totalMatches++;
             }
 
             $averageLosingCurrentRound = $averageLosers / $totalMatches;
-            //TODO: Update Average Losing for current round
-
+            $this->roundRepository->update($round["id"], $averageLosingCurrentRound);
             $averageLosersArray[$roundNumber] = $averageLosingCurrentRound;
             $roundNumber++;
         }
@@ -154,8 +154,11 @@ class SeasonManager
                     //Meermaals aanwezig op huidige speeldag
                 } //We zitten goed!
                 else if ($roundNumber == $matchCurrentPlayer["roundNumber"]) {
-                    //TODO
-                    $matchStatistics = Utilities::calculateMatchStatistics();
+                    
+                    $matchStatistics = Utilities::calculateMatchStatistics($matchCurrentPlayer["home_firstPlayer_Id"], $matchCurrentPlayer["home_secondPlayer_Id"], 
+                        $matchCurrentPlayer["away_firstPlayer_Id"], $matchCurrentPlayer["away_secondPlayer_Id"], 
+                        $matchCurrentPlayer["firstSet_home"], $matchCurrentPlayer["firstSet_away"], $matchCurrentPlayer["secondSet_home"], 
+                        $matchCurrentPlayer["secondSet_away"], $matchCurrentPlayer["thirdSet_home"], $matchCurrentPlayer["thirdSet_away"]);
 
                     $seasonStats["pointsPlayed"] += $matchStatistics["totalPoints"];
                     $seasonStats["setsPlayed"] += $matchStatistics["amountOfSets"];
@@ -187,10 +190,7 @@ class SeasonManager
 
             //We hebben nu $resultArray[speeldag] met gemiddelde voor elke speeldag van de speler
             //Geef speeldag  mee, samen met uitslag speeldag.
-            //Ranking = 0, want we weten dit niet!
             //Hebben gemiddelde speeldag, MAAR MOETEN GEMIDDELDE TOT DIE SPEELDAG BEREKENEN! => done
-
-            //  spelers rankschikken per speeldag en dan pas update_speeldagstats => enkel nog update_speeldagstats
 
             foreach ($roundsOfCurrentSeason as $round) {
                 $sumOfAveragePerRound = 0;

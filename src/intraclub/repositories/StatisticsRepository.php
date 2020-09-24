@@ -43,8 +43,8 @@ class StatisticsRepository {
 
             WHERE speler_id = ? AND seizoen_id = ?");
 
-        $stmt->bind_param("iiiiiiii", $setsPlayed, $setsWon, $pointsPlayed, $pointsWon, $matchesPlayed, $matchesWon, $playerId, $seasonId);
-        return $stmt->execute();
+        $updatePlayerSeasonStmt->bind_param("iiiiiiii", $setsPlayed, $setsWon, $pointsPlayed, $pointsWon, $matchesPlayed, $matchesWon, $playerId, $seasonId);
+        return $updatePlayerSeasonStmt->execute();
     }
 
     public function insertOrUpdateRoundStatistics($roundId, $playerId, $average){
@@ -57,8 +57,8 @@ class StatisticsRepository {
             ON DUPLICATE KEY UPDATE
                 gemiddelde = ?");
 
-        $stmt->bind_param("iiii", $average, $playerId, $roundId, $average);
-        return $stmt->execute();
+        $updatePlayerSeasonStmt->bind_param("iiii", $average, $playerId, $roundId, $average);
+        return $updatePlayerSeasonStmt->execute();
     }
    
 }

@@ -120,15 +120,15 @@ class Utilities
             $trimmedPointsLosingTeam = $totalAwayteam;
             $totalPointsWinningTeam =$firstSet_home + $secondSet_home + $thirdSet_home;
             $totalPointsLosingTeam = $firstSet_away + $secondSet_away + $thirdSet_away;
-            $id_winnaars = array($home_firstPlayer_Id, $home_secondPlayer_Id);
-            $id_verliezers = array($away_firstPlayer_Id, $away_secondPlayer_Id);
+            $winningTeamIds = array($home_firstPlayer_Id, $home_secondPlayer_Id);
+            $losingTeamIds = array($away_firstPlayer_Id, $away_secondPlayer_Id);
         } else {
             $trimmedPointsWinningTeam = $totalAwayteam;
             $trimmedPointsLosingTeam = $totalHometeam;
             $totalPointsWinningTeam = $firstSet_away + $secondSet_away + $thirdSet_away;
             $totalPointsLosingTeam = $firstSet_home + $secondSet_home + $thirdSet_home;
-            $id_winnaars = array($away_firstPlayer_Id, $away_secondPlayer_Id);
-            $id_verliezers = array($home_firstPlayer_Id, $home_secondPlayer_Id);
+            $winningTeamIds = array($away_firstPlayer_Id, $away_secondPlayer_Id);
+            $losingTeamIds = array($home_firstPlayer_Id, $home_secondPlayer_Id);
         }
 
         $return = array(
@@ -138,8 +138,8 @@ class Utilities
             "totalPointsLosingTeam" => $totalPointsLosingTeam,
             "averagePointsWinningTeam" => $trimmedPointsWinningTeam / $amountOfSetsPlayed,
             "averagePointsLosingTeam" => $trimmedPointsLosingTeam / $amountOfSetsPlayed,
-            "winningTeamIds" => $id_winnaars,
-            "losingTeamIds" => $id_verliezers,
+            "winningTeamIds" => $winningTeamIds,
+            "losingTeamIds" => $losingTeamIds,
             "totalPoints" => $totalPointsLosingTeam + $totalPointsWinningTeam
         );
         return $return;

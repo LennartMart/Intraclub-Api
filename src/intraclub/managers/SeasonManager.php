@@ -62,16 +62,14 @@ class SeasonManager
     }
     public function create($period)
     {
-        //1. Get Current Season
-        $previousSeasonId = $this->seasonRepository->getCurrentSeasonId();
+        //1. Get current ranking
+        $ranking = $this->rankingManager->get(null, true);
 
         //2. Insert new season
         $newSeasonId = $this->seasonRepository->create($period);    
 
-        //3. Insert playerPerSeason Record for every player & Based on ranking -> Add some points
-        $ranking = $this->rankingManager->get($previousSeasonId);
-
-        $reversedRanking = array_reverse($ranking);
+        //3. Insert playerPerSeason Record for every player & Based on ranking -> Add some points 
+        $reversedRanking = array_reverse($ranking["general"]);
         $basePoints = 19.000;
         foreach ($reversedRanking as $rankedPlayer) {
             $this->statisticsRepository->createSeasonStatistics($newSeasonId, $rankedPlayer["id"], $basePoints);
@@ -165,7 +163,7 @@ class SeasonManager
                     $seasonStats["roundsPresent"]++;
                     $seasonStats["matchesPlayed"]++;
 
-                    if (in_array($speler->id, $matchStatistics["winningTeamIds"])) {
+                    if (in_array($player["id"], $matchStatistics["winningTeamIds"])) {
                         // speler heeft gewonnen!
                         $resultArray[$roundNumber] = $matchStatistics["averagePointsWinningTeam"];
                         $seasonStats["pointsWon"] += $matchStatistics["totalPointsWinningTeam"];
@@ -207,7 +205,7 @@ class SeasonManager
 
             }
             $this->statisticsRepository->updateSeasonStatistics($currentSeasonId, $player["id"], $seasonStats["setsPlayed"], $seasonStats["setsWon"],
-                $seasonStats["pointsPlayed"], $seasonStats["pointsWon"], $seasonStats["matchesPlayed"], $seasonStats["matchesWon"]);
+                $seasonStats["pointsPlayed"], $seasonStats["pointsWon"], $seasonStats["matchesPlayed"], $seasonStats["matchesWon"], $seasonStats["roundsPresent"]);
         }
 
 

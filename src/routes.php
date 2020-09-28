@@ -41,7 +41,7 @@ return function (App $app) {
         $postArr = $request->getParsedBody();
         $period = $postArr["period"];
 
-        //$seasonManager->create($period);
+        $seasonManager->create($period);
         return $response;
     });
     $app->post('/rounds', function (Request $request, Response $response, array $args) {
@@ -62,9 +62,11 @@ return function (App $app) {
         checkAccessRights();
         return "hello";
     });
-    $app->post('/rounds/calculate', function (Request $request, Response $response, array $args) {
+    $app->post('/seasons/calculate', function (Request $request, Response $response, array $args) {
         checkAccessRights();
-        return "hello";
+        $seasonManager = new SeasonManager($this->db);
+        $seasonManager->calculateCurrentSeason();
+        return $response;
     });
 
     $app->put('/players/{id}', function (Request $request, Response $response, array $args) {

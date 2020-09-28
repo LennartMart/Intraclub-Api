@@ -79,7 +79,7 @@ class MatchRepository {
         $stmt = $this->db->prepare("INSERT INTO intra_wedstrijden 
             (speeldag_id, team1_speler1, team1_speler2, team2_speler1, team2_speler2, set1_1, set1_2, set2_1, set2_2, set3_1, set3_2) 
             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
-        $stmt->bind_param("iiiiiiiiiii", $roundId, $playerId1, $playerId2, $playerId3, $playerId4, $set1Home, $set1Away, $set2Home, $set2Away, $set3Home, $set3Away);
+        $stmt->bindParam("iiiiiiiiiii", $roundId, $playerId1, $playerId2, $playerId3, $playerId4, $set1Home, $set1Away, $set2Home, $set2Away, $set3Home, $set3Away);
         return $stmt->execute();
     }
     /*
@@ -101,7 +101,7 @@ class MatchRepository {
            set3_2 = ?
         WHERE
            id = ?");
-        $stmt->bind_param("iiiiiiiiiii", $playerId1, $playerId2, $playerId3, $playerId4, $set1Home, $set1Away, $set2Home, $set2Away, $set3Home, $set3Away, $roundId);
+        $stmt->bindParam("iiiiiiiiiii", $playerId1, $playerId2, $playerId3, $playerId4, $set1Home, $set1Away, $set2Home, $set2Away, $set3Home, $set3Away, $roundId);
         return $stmt->execute();
     }
 }

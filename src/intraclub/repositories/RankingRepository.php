@@ -15,8 +15,8 @@ class RankingRepository {
     }
 
     public function getRankingForNewSeason($seasonId){
-        $query = "SELECT ROW_NUMBER() OVER (ORDER BY ISPS.basispunten DESC) AS [rank],
-            ISP.id AS id, ISP.naam AS [name], ISP.voornaam as firstName,
+        $query = "SELECT ROW_NUMBER() OVER (ORDER BY ISPS.basispunten DESC) AS rank,
+            ISP.id AS id, ISP.naam AS name, ISP.voornaam as firstName,
             ISP.geslacht AS gender, ISP.is_veteraan as veteran, ISP.klassement AS ranking, ISP.jeugd as youth, ISPS.basispunten AS average
         FROM  intra_spelerperseizoen ISPS
         INNER JOIN intra_spelers ISP ON ISP.id = ISPS.speler_id

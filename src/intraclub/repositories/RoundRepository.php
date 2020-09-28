@@ -1,6 +1,7 @@
 <?php
-
 namespace intraclub\repositories;
+
+use PDO;
 
 class RoundRepository
 {
@@ -38,19 +39,22 @@ class RoundRepository
     public function create($seasonId, $date, $roundNumber){
 
         $stmt = $this->db->prepare("INSERT INTO intra_speeldagen (seizoen_id, datum, speeldagnummer, gemiddeld_verliezend, is_berekend) VALUES (?, ?, ?, 0, 0)");
-        $stmt->bind_param("isi", $seasonId, $date, $roundNumber);
+        $stmt->bindParam("isi", $seasonId, $date, $roundNumber);
         return $stmt->execute();
     }
 
     public function update($id, $averageAbsent){
+
         $updateRoundstmt = $this->db->prepare("UPDATE intra_speeldagen
         SET
             gemiddeld_verliezend = ?,
             is_berekend = 1
         WHERE id = ?");
 
-        $updateRoundstmt->bind_param("ii", $averageAbsent, $id);
-        return $updateRoundstmt->execute();
+        $updateRoundstmt->bindParam(1, $averageAbsent, PDO::PARAM_INT);
+        $updateRoundstmt->bindParam(2, $id, PDO::PARAM_INT);
+        // TODO
+        //$updateRoundstmt->execute();
     }
     public function getById($id)
     {

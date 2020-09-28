@@ -75,7 +75,7 @@ class Utilities
             ),                     
         );
     }
-    private function trimSets($firstScore, $secondScore)
+    private static function trimSets($firstScore, $secondScore)
     {
         return ($firstScore > 21 || $secondScore > 21) ? 21 / max($firstScore, $secondScore) * $firstScore : $firstScore;
     }
@@ -112,8 +112,8 @@ class Utilities
 
         $winner = ($setsWonHometeam > $setsWonAwayteam) ? 1 : 2;
 
-        $totalHometeam = trimSets($firstSet_home, $firstSet_away) + trimSets($secondSet_home, $secondSet_away) + trimSets($thirdSet_home, $thirdSet_away);
-        $totalAwayteam = trimSets($firstSet_away, $firstSet_home) + trimSets($secondSet_away, $secondSet_home) + trimSets($thirdSet_away, $thirdSet_home);
+        $totalHometeam = Utilities::trimSets($firstSet_home, $firstSet_away) + Utilities::trimSets($secondSet_home, $secondSet_away) + Utilities::trimSets($thirdSet_home, $thirdSet_away);
+        $totalAwayteam = Utilities::trimSets($firstSet_away, $firstSet_home) + Utilities::trimSets($secondSet_away, $secondSet_home) + Utilities::trimSets($thirdSet_away, $thirdSet_home);
 
         if ($winner == 1) {
             $trimmedPointsWinningTeam = $totalHometeam;

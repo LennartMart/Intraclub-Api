@@ -1,7 +1,7 @@
 <?php
 namespace intraclub\repositories;
 
-
+use PDO;
 class MatchRepository {
    /**
      * Database connection
@@ -78,8 +78,19 @@ class MatchRepository {
     public function create($roundId, $playerId1, $playerId2, $playerId3, $playerId4, $set1Home, $set1Away, $set2Home, $set2Away, $set3Home, $set3Away){
         $stmt = $this->db->prepare("INSERT INTO intra_wedstrijden 
             (speeldag_id, team1_speler1, team1_speler2, team2_speler1, team2_speler2, set1_1, set1_2, set2_1, set2_2, set3_1, set3_2) 
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
-        $stmt->bindParam("iiiiiiiiiii", $roundId, $playerId1, $playerId2, $playerId3, $playerId4, $set1Home, $set1Away, $set2Home, $set2Away, $set3Home, $set3Away);
+            VALUES (:roundId, :playerId1, :playerId2, :playerId3, :playerId4, :set1Home, :set1Away, :set2Home, :set2Away, :set3Home, :set3Away)");
+        $stmt->bindParam(':roundId', $roundId, PDO::PARAM_INT);
+        $stmt->bindParam(':playerId1', $playerId1, PDO::PARAM_INT);
+        $stmt->bindParam(':playerId2', $playerId2, PDO::PARAM_INT);
+        $stmt->bindParam(':playerId3', $playerId3, PDO::PARAM_INT);
+        $stmt->bindParam(':playerId4', $playerId4, PDO::PARAM_INT);
+        $stmt->bindParam(':set1Home', $set1Home, PDO::PARAM_INT);
+        $stmt->bindParam(':set1Away', $set1Away, PDO::PARAM_INT);
+        $stmt->bindParam(':set2Home', $set2Home, PDO::PARAM_INT);
+        $stmt->bindParam(':set2Away', $set2Away, PDO::PARAM_INT);
+        $stmt->bindParam(':set3Home', $set3Home, PDO::PARAM_INT);
+        $stmt->bindParam(':set3Away', $set3Away, PDO::PARAM_INT);
+
         return $stmt->execute();
     }
     /*
@@ -89,19 +100,30 @@ class MatchRepository {
     public function update($roundId, $playerId1, $playerId2, $playerId3, $playerId4, $set1Home, $set1Away, $set2Home, $set2Away, $set3Home, $set3Away){
         $stmt = $this->db->prepare("UPDATE intra_wedstrijden
         SET
-           team1_speler1 = ?,
-           team1_speler2 = ?,
-           team2_speler1 = ?,
-           team2_speler2 = ?,
-           set1_1 = ?,
-           set1_2 = ?,
-           set2_1 = ?,
-           set2_2 = ?,
-           set3_1 = ?,
-           set3_2 = ?
+           team1_speler1 = :playerId1,
+           team1_speler2 = :playerId2,
+           team2_speler1 = :playerId3,
+           team2_speler2 = :playerId4,
+           set1_1 = :set1Home,
+           set1_2 = :set1Away,
+           set2_1 = :set2Home,
+           set2_2 = :set2Away,
+           set3_1 = :set3Home,
+           set3_2 = :set3Away
         WHERE
-           id = ?");
-        $stmt->bindParam("iiiiiiiiiii", $playerId1, $playerId2, $playerId3, $playerId4, $set1Home, $set1Away, $set2Home, $set2Away, $set3Home, $set3Away, $roundId);
+           id = :roundId");
+        $stmt->bindParam(':roundId', $roundId, PDO::PARAM_INT);
+        $stmt->bindParam(':playerId1', $playerId1, PDO::PARAM_INT);
+        $stmt->bindParam(':playerId2', $playerId2, PDO::PARAM_INT);
+        $stmt->bindParam(':playerId3', $playerId3, PDO::PARAM_INT);
+        $stmt->bindParam(':playerId4', $playerId4, PDO::PARAM_INT);
+        $stmt->bindParam(':set1Home', $set1Home, PDO::PARAM_INT);
+        $stmt->bindParam(':set1Away', $set1Away, PDO::PARAM_INT);
+        $stmt->bindParam(':set2Home', $set2Home, PDO::PARAM_INT);
+        $stmt->bindParam(':set2Away', $set2Away, PDO::PARAM_INT);
+        $stmt->bindParam(':set3Home', $set3Home, PDO::PARAM_INT);
+        $stmt->bindParam(':set3Away', $set3Away, PDO::PARAM_INT);
+
         return $stmt->execute();
     }
 }

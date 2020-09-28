@@ -38,8 +38,11 @@ class RoundRepository
     */
     public function create($seasonId, $date, $roundNumber){
 
-        $stmt = $this->db->prepare("INSERT INTO intra_speeldagen (seizoen_id, datum, speeldagnummer, gemiddeld_verliezend, is_berekend) VALUES (?, ?, ?, 0, 0)");
-        $stmt->bindParam("isi", $seasonId, $date, $roundNumber);
+        $stmt = $this->db->prepare("INSERT INTO intra_speeldagen (seizoen_id, datum, speeldagnummer, gemiddeld_verliezend, is_berekend) VALUES (:seasonId, :date, :roundNumber, 0, 0)");
+        $stmt->bindParam(':seasonId', $seasonId, PDO::PARAM_INT);
+        $stmt->bindParam(':date', $date, PDO::PARAM_STR);
+        $stmt->bindParam(':roundNumber', $roundNumber, PDO::PARAM_INT);
+
         return $stmt->execute();
     }
 

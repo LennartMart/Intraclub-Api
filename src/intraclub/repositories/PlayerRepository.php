@@ -1,6 +1,6 @@
 <?php
 namespace intraclub\repositories;
-
+use PDO;
 
 class PlayerRepository {
    /**

@@ -1,9 +1,13 @@
 <?php
 
+use intraclub\managers\MatchManager;
 use intraclub\managers\PlayerManager;
 use intraclub\managers\RankingManager;
 use intraclub\managers\RoundManager;
 use intraclub\managers\SeasonManager;
+
+use intraclub\validators\MatchValidator;
+
 use Slim\App;
 use Slim\Http\Request;
 use Slim\Http\Response;
@@ -51,16 +55,32 @@ return function (App $app) {
         $postArr = $request->getParsedBody();
         $date = $postArr["date"];
         
-        //$roundManager->create($date);
+        $roundManager->create($date);
         return $response;
     });
     $app->post('/matches', function (Request $request, Response $response, array $args) {
         checkAccessRights();
-        return "hello";
+
+        $matchValidator = new MatchValidator($this->db);
+        $matchManager = new MatchManager($this->db);
+
+        $postArr = $request->getParsedBody();
+
+        $errors = $matchValidator->validateCreateMatch($postArr["roundId"], $postArr["playerId1"], $postArr["playerId2"], $postArr["playerId3"], $postArr["playerId4"], 
+            $postArr["set1Home"], $postArr["set1Away"], $postArr["set2Home"], $postArr["set2Away"], $postArr["set3Home"], $postArr["set3Away"]);
+        
+        if(!empty($errors)){
+            $newResponse = $response->withStatus(400);
+            return $newResponse->withJson($errors);
+        }
+        $matchManager->create($postArr["roundId"], $postArr["playerId1"], $postArr["playerId2"], $postArr["playerId3"], $postArr["playerId4"], 
+            $postArr["set1Home"], $postArr["set1Away"], $postArr["set2Home"], $postArr["set2Away"], $postArr["set3Home"], $postArr["set3Away"]);
+        
+        return $response;
     });
     $app->post('/players', function (Request $request, Response $response, array $args) {
         checkAccessRights();
-        return "hello";
+        return $response;
     });
     $app->post('/seasons/calculate', function (Request $request, Response $response, array $args) {
         checkAccessRights();

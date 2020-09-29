@@ -89,6 +89,7 @@ class Utilities
         $totalPointsLosingTeam = 0;
         $amountOfSetsPlayed = 0;
 
+        //Bepaal wie welke set wint
         if ($firstSet_home > $firstSet_away) {
             $setsWonHometeam++;
         } else {
@@ -110,11 +111,14 @@ class Utilities
             $amountOfSetsPlayed = 2;
         }
 
+        //Bepaal winnaar
         $winner = ($setsWonHometeam > $setsWonAwayteam) ? 1 : 2;
 
+        //Bereken totaal aantal punten
         $totalHometeam = Utilities::trimSets($firstSet_home, $firstSet_away) + Utilities::trimSets($secondSet_home, $secondSet_away) + Utilities::trimSets($thirdSet_home, $thirdSet_away);
         $totalAwayteam = Utilities::trimSets($firstSet_away, $firstSet_home) + Utilities::trimSets($secondSet_away, $secondSet_home) + Utilities::trimSets($thirdSet_away, $thirdSet_home);
 
+        //Koppel de 'winnende' punten aan het juiste team
         if ($winner == 1) {
             $trimmedPointsWinningTeam = $totalHometeam;
             $trimmedPointsLosingTeam = $totalAwayteam;

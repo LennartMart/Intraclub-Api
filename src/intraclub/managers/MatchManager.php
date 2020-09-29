@@ -27,6 +27,14 @@ class MatchManager {
     public function getAllByRoundId($roundId){
         return $this->matchRepository->getAllByRoundId($roundId);
     }
+
+    public function create($roundId, $playerId1, $playerId2, $playerId3, $playerId4, 
+        $set1Home, $set1Away, $set2Home, $set2Away, $set3Home, $set3Away){
+
+        return $this->matchRepository->create($roundId, $playerId1, $playerId2, $playerId3, $playerId4,
+            $set1Home, $set1Away, $set2Home, $set2Away, $set3Home, $set3Away);
+    }
+
     private function checkSeason($seasonId){
         if(empty($seasonId)){
             return $this->seasonRepository->getCurrentSeasonId();

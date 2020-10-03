@@ -11,7 +11,12 @@ class RoundRepository
      * @var PDO
      */
     protected $db;
-
+    
+    /**
+     * Speeldag query: basisinfo én aantal gespeelde matchen
+     *
+     * @var string
+     */
     protected $roundQuery = "SELECT ISP.id, ISP.speeldagnummer AS roundNumber, ROUND(ISP.gemiddeld_verliezend,2) AS averageAbsent, 
     ISP.datum AS date, ISP.is_berekend AS calculated, (SELECT COUNT(IW.id) FROM intra_wedstrijden IW where IW.speeldag_id = ISP.id) as matches
     FROM intra_speeldagen ISP";
@@ -20,7 +25,13 @@ class RoundRepository
     {
         $this->db = $db;
     }
-
+    
+    /**
+     * Haal alle speeldagen van een seizoen op
+     *
+     * @param  int $seasonId
+     * @return array speeldagen
+     */
     public function getAll($seasonId = null)
     {
         if (empty($seasonId)) {
@@ -31,11 +42,15 @@ class RoundRepository
         $stmt->execute([$seasonId]);
         return $stmt->fetchAll();
     }
-
-    /*
-    *   Creates a new Round
-    *   Needs validation before executing!
-    */
+    
+    /**
+     * Maak een nieuwe speeldag aan
+     *
+     * @param  int $seasonId
+     * @param  string $date
+     * @param  int $roundNumber
+     * @return void
+     */
     public function create($seasonId, $date, $roundNumber){
 
         $stmt = $this->db->prepare("INSERT INTO intra_speeldagen (seizoen_id, datum, speeldagnummer, gemiddeld_verliezend, is_berekend) VALUES (:seasonId, :date, :roundNumber, 0, 0)");
@@ -45,7 +60,14 @@ class RoundRepository
 
         return $stmt->execute();
     }
-
+    
+    /**
+     * Pas het gemiddelde voor afwezigen aan
+     *
+     * @param  int $id
+     * @param  int $averageAbsent
+     * @return void
+     */
     public function update($id, $averageAbsent){
 
         $updateRoundstmt = $this->db->prepare("UPDATE intra_speeldagen
@@ -56,22 +78,64 @@ class RoundRepository
 
         $updateRoundstmt->bindParam(1, $averageAbsent, PDO::PARAM_INT);
         $updateRoundstmt->bindParam(2, $id, PDO::PARAM_INT);
-        // TODO
-        //$updateRoundstmt->execute();
-    }
+        $updateRoundstmt->execute();
+    }    
+    /**
+     * Controle of er een speeldag bestaat op datum
+     *
+     * @param  string $date
+     * @return bool true indien speeldag bestaat
+     */
+    public function existsWithDate($date){
+        $stmt = $this->db->prepare("SELECT COUNT(*) as num FROM intra_speeldagen WHERE datum = ? ");
+        $stmt->execute([$date]);
+        $row = $stmt->fetch();
+        return $row["num"] > 0;
+    }    
+    /**
+     * Controle of speeldag bestaat
+     *
+     * @param  int $id
+     * @return bool true indien speeldag bestaat
+     */
+    public function exists($id){
+        $stmt = $this->db->prepare("SELECT COUNT(*) as num FROM intra_speeldagen WHERE id = ? ");
+        $stmt->execute([$id]);
+        $row = $stmt->fetch();
+        return $row["num"] > 0;
+    }    
+    /**
+     * Haal ronde op
+     *
+     * @param  int $id
+     * @return array speeldag
+     */
     public function getById($id)
     {
         $stmt = $this->db->prepare($this->roundQuery . " WHERE ISP.id=?");
         $stmt->execute([$id]);
         return $stmt->fetch();
-    }
+    }    
+    /**
+     * Ronde op basis van nummer en seizoen
+     *
+     * @param  int $seasonId
+     * @param  int $number
+     * @return array speeldag
+     */
     public function getBySeasonAndNumber($seasonId, $number)
     {
         $stmt = $this->db->prepare($this->roundQuery . " WHERE ISP.seizoen_id = :seasonId and ISP.speeldagnummer = :roundNumber;");
         $stmt->execute(array(':seasonId' => $seasonId, ':roundNumber' => $number));
         return $stmt->fetch();
     }
-
+    
+    /**
+     * Haal laatste speeldag op van seizoen
+     *
+     * @param  int $seasonId
+     * @return array speeldag
+     */
     public function getLast($seasonId = null)
     {
         if (empty($seasonId)) {
@@ -81,7 +145,13 @@ class RoundRepository
         $stmt->execute([$seasonId]);
         return $stmt->fetch();
     }
-
+    
+    /**
+     * Haal laatste berekende speeldag op
+     *
+     * @param  int $seasonId
+     * @return array speeldag
+     */
     public function getLastCalculated($seasonId = null)
     {
         if (empty($seasonId)) {
@@ -91,7 +161,13 @@ class RoundRepository
         $stmt->execute([$seasonId]);
         return $stmt->fetch();
     }
-
+    
+    /**
+     * Haal speeldag op, inclusief wedstrijden
+     *
+     * @param  int $id
+     * @return array speeldag met wedstrijden
+     */
     public function getWithMatches($id)
     {
         if (empty($id)) {

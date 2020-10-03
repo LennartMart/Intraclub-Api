@@ -9,9 +9,14 @@ class MatchRepository {
      * @var PDO
      */
     protected $db;
-
+    
+    /**
+     * Query om wedstrijden op te halen, inclusief alle spelers
+     *
+     * @var string
+     */
     protected $matchQuery = "
-    SELECT IW.id, speeldag_id AS roundId,
+    SELECT IW.id, speeldag_id AS roundId, ISP.speeldagnummer AS roundNumber,
         set1_1 AS firstSet_home, set1_2 AS firstSet_away, set2_1 AS secondSet_home, set2_2 AS secondSet_away, 
         set3_1 AS thirdSet_home, set3_2 AS thirdSet_away,
         PL1H.Id as home_firstPlayer_Id, PL1H.voornaam AS home_firstPlayer_firstName, PL1H.naam AS home_firstPlayer_name,
@@ -30,19 +35,38 @@ class MatchRepository {
     public function __construct($db){
         $this->db = $db;
     }
-
+    
+    /**
+     * Haal alle matchen op voor seizoen
+     *
+     * @param  int $seasonId
+     * @return array of matches
+     */
     public function getAllBySeasonId($seasonId){        
         $stmt = $this->db->prepare($this->matchQuery . " WHERE ISEASON.Id=?");
         $stmt->execute([$seasonId]); 
         return $stmt->fetchAll();
     }
-
+    
+    /**
+     * Haal alle matchen op voor ronde
+     *
+     * @param  int $roundId
+     * @return array of matches
+     */
     public function getAllByRoundId($roundId){
         $stmt = $this->db->prepare($this->matchQuery . " WHERE ISP.Id=?");
         $stmt->execute([$roundId]); 
         return $stmt->fetchAll();
     }
-    
+        
+    /**
+     * Haal alle matchen op voor seizoen en speler
+     *
+     * @param  int $seasonId
+     * @param  int $playerId
+     * @return array of matches
+     */
     public function getAllBySeasonAndPlayerId($seasonId, $playerId){
         $query = "SELECT IW.Id, set1_1 AS firstSet_home, set1_2 AS firstSet_away, set2_1 AS secondSet_home, set2_2 AS secondSet_away, 
                     set3_1 AS thirdSet_home, set3_2 AS thirdSet_away,
@@ -70,11 +94,23 @@ class MatchRepository {
         $stmt->execute([$playerId, $playerId, $playerId, $playerId, $seasonId]); 
         return $stmt->fetchAll();
     }
-
-    /*
-    *   Creates a new Match
-    *   Needs validation before executing!
-    */
+    
+    /**
+     * Maak een nieuwe wedstrijd aan
+     *
+     * @param  int $roundId
+     * @param  int $playerId1
+     * @param  int $playerId2
+     * @param  int $playerId3
+     * @param  int $playerId4
+     * @param  int $set1Home
+     * @param  int $set1Away
+     * @param  int $set2Home
+     * @param  int $set2Away
+     * @param  int $set3Home
+     * @param  int $set3Away
+     * @return void
+     */
     public function create($roundId, $playerId1, $playerId2, $playerId3, $playerId4, $set1Home, $set1Away, $set2Home, $set2Away, $set3Home, $set3Away){
         $stmt = $this->db->prepare("INSERT INTO intra_wedstrijden 
             (speeldag_id, team1_speler1, team1_speler2, team2_speler1, team2_speler2, set1_1, set1_2, set2_1, set2_2, set3_1, set3_2) 
@@ -93,11 +129,24 @@ class MatchRepository {
 
         return $stmt->execute();
     }
-    /*
-    *   Update a Match
-    *   Needs validation before executing!
-    */
-    public function update($roundId, $playerId1, $playerId2, $playerId3, $playerId4, $set1Home, $set1Away, $set2Home, $set2Away, $set3Home, $set3Away){
+    
+    /**
+     * Update een bestaande wedstrijd
+     *
+     * @param  int $id
+     * @param  int $playerId1
+     * @param  int $playerId2
+     * @param  int $playerId3
+     * @param  int $playerId4
+     * @param  int $set1Home
+     * @param  int $set1Away
+     * @param  int $set2Home
+     * @param  int $set2Away
+     * @param  int $set3Home
+     * @param  int $set3Away
+     * @return void
+     */
+    public function update($id, $playerId1, $playerId2, $playerId3, $playerId4, $set1Home, $set1Away, $set2Home, $set2Away, $set3Home, $set3Away){
         $stmt = $this->db->prepare("UPDATE intra_wedstrijden
         SET
            team1_speler1 = :playerId1,
@@ -111,8 +160,8 @@ class MatchRepository {
            set3_1 = :set3Home,
            set3_2 = :set3Away
         WHERE
-           id = :roundId");
-        $stmt->bindParam(':roundId', $roundId, PDO::PARAM_INT);
+           id = :id");
+        $stmt->bindParam(':id', $id, PDO::PARAM_INT);
         $stmt->bindParam(':playerId1', $playerId1, PDO::PARAM_INT);
         $stmt->bindParam(':playerId2', $playerId2, PDO::PARAM_INT);
         $stmt->bindParam(':playerId3', $playerId3, PDO::PARAM_INT);
@@ -125,5 +174,18 @@ class MatchRepository {
         $stmt->bindParam(':set3Away', $set3Away, PDO::PARAM_INT);
 
         return $stmt->execute();
+    }
+    
+    /**
+     * Controleer of match bestaat
+     *
+     * @param  mixed $id
+     * @return bool
+     */
+    public function exists($id){
+        $stmt = $this->db->prepare("SELECT COUNT(*) as num FROM intra_wedstrijden WHERE id = ? ");
+        $stmt->execute([$id]);
+        $row = $stmt->fetch();
+        return $row["num"] > 0;
     }
 }

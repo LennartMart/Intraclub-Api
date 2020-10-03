@@ -17,11 +17,36 @@ class SeasonManager
      *
      * @var PDO
      */
-    protected $db;
-    protected $rankingManager;
-    protected $seasonRepository;
-    protected $roundRepository;
-    protected $matchRepository;
+    protected $db;    
+    /**
+     * rankingManager
+     *
+     * @var RankingManager
+     */
+    protected $rankingManager;    
+    /**
+     * seasonRepository
+     *
+     * @var SeasonRepository
+     */
+    protected $seasonRepository;    
+    /**
+     * roundRepository
+     *
+     * @var RoundRepository
+     */
+    protected $roundRepository;    
+    /**
+     * matchRepository
+     *
+     * @var MatchRepository
+     */
+    protected $matchRepository;    
+    /**
+     * playerRepository
+     *
+     * @var PlayerRepository
+     */
     protected $playerRepository;
 
 
@@ -43,7 +68,13 @@ class SeasonManager
         $this->playerRepository = new PlayerRepository($this->db);
 
     }
-
+    
+    /**
+     * Haal seizoenstatistieken op
+     *
+     * @param  int $seasonId
+     * @return array seizoensstatistieken
+     */
     public function getStatistics($seasonId = null)
     {
         if (empty($seasonId)) {
@@ -59,7 +90,13 @@ class SeasonManager
             }
         }
         return $response;
-    }
+    }    
+    /**
+     * Creatie nieuw seizoen, inclusief lege seizoensstatistieken
+     *
+     * @param  string $period
+     * @return void
+     */
     public function create($period)
     {
         //1. Get current ranking
@@ -76,7 +113,12 @@ class SeasonManager
             $basePoints += 0.0001;
         }
     }
-
+    
+    /**
+     * Bereken tussenstand huidig seizoen
+     *
+     * @return void
+     */
     public function calculateCurrentSeason()
     {
         $currentSeasonId = $this->seasonRepository->getCurrentSeasonId();

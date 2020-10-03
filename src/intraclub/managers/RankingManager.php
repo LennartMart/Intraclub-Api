@@ -20,7 +20,12 @@ class RankingManager
      * @var RoundRepository
      */
     protected $roundRepository;
-
+    
+    /**
+     * seasonRepository
+     *
+     * @var SeasonRepository
+     */
     protected $seasonRepository;
 
     public function __construct($db)
@@ -29,7 +34,19 @@ class RankingManager
         $this->roundRepository = new RoundRepository($db);
         $this->seasonRepository = new SeasonRepository($db);
     }
-
+    
+    /**
+     * Haal ranking op
+     *
+     * @param  int $items aantal items
+     * @param  bool $showGeneral toon algemeen klassement
+     * @param  bool $showWomen toon vrouwen klassement
+     * @param  bool $showVeterans toon veteranen klassement
+     * @param  bool $showRecreants toon recreanten klassement
+     * @param  int $seasonId seizoen id
+     * @param  int $roundId speeldag id
+     * @return void
+     */
     public function get($items = null, $showGeneral = false, $showWomen = false, $showVeterans = false, $showRecreants = false, $seasonId = null, $roundId = null)
     {
         // Check if parameters are filled in
@@ -66,7 +83,13 @@ class RankingManager
         };
         return $response;
     }
-
+    
+    /**
+     * Controle seizoen.
+     *
+     * @param  mixed $seasonId Indien leeg: huidig seizoen
+     * @return int seasonId
+     */
     private function checkSeason($seasonId)
     {
         if (empty($seasonId)) {
@@ -74,7 +97,14 @@ class RankingManager
         }
         return $seasonId;
     }
-
+    
+    /**
+     * Controle ronde
+     *
+     * @param  mixed $roundId indien leeg: laatst berekende ronde
+     * @param  mixed $seasonId
+     * @return void
+     */
     private function checkRound($roundId, $seasonId)
     {
         if (empty($roundId)) {
@@ -82,10 +112,17 @@ class RankingManager
         }
         return $this->roundRepository->getById($roundId);
     }
-
-    /*
-    Generic Ranking builder function
-    Accepts filterfunction to filter players on specific property
+    
+    /**
+     * Generic Ranking builder function
+     *
+     * Accepts filterfunction to filter players on specific property
+     *
+     * @param  mixed $ranking
+     * @param  mixed $previousRanking
+     * @param  function $filterfunction
+     * @param  int $items
+     * @return void
      */
     private function buildRanking($ranking, $previousRanking, $filterfunction, $items)
     {
@@ -113,23 +150,46 @@ class RankingManager
     private function filterNothing($player)
     {
         return true;
-    }
+    }    
+    /**
+     * Filter ranking op vrouwen
+     *
+     * @param  array $player
+     * @return bool
+     */
     private function filterWoman($player)
     {
         return $player["gender"] == "Vrouw";
     }
+    /**
+     * Filter ranking op recreanten
+     *
+     * @param  array $player
+     * @return bool
+     */
     private function filterRecreant($player)
     {
         return $player["ranking"] == "Recreant";
     }
+    /**
+     * Filter ranking op veteranen
+     *
+     * @param  array $player
+     * @return bool
+     */
     private function filterVeteran($player)
     {
         return $player["veteran"] == 1;
 
     }
-
-    /*
-    Map to response object
+    
+    /**
+     * Map to response object
+     *
+     * @param  int $index
+     * @param  int $currentRanking
+     * @param  int $previousRanking
+     * @return array
      */
     private function mapToRankingObject($index, $currentRanking, $previousRanking)
     {
@@ -142,10 +202,15 @@ class RankingManager
             "difference" => $this->findPreviousRanking($currentRanking[$index]["id"], $index + 1, $previousRanking),
         );
     }
-
-    /*
-    Find difference with previous ranking
-    Returns 0 if no previous ranking available
+    /**
+     * Find difference with previous ranking
+     * 
+     * Returns 0 if no previous ranking available
+     *
+     * @param  int $playerId
+     * @param  int $currentRank
+     * @param  int $previousRanking
+     * @return int difference
      */
     private function findPreviousRanking($playerId, $currentRank, $previousRanking)
     {

@@ -16,13 +16,35 @@ class SeasonRepository
     {
         $this->db = $db;
     }
-
+    
+    /**
+     * Haal huidig seizoen op
+     *
+     * @return array seizoen
+     */
     public function getCurrentSeasonId()
     {
         $currentSeason = $this->db->query("SELECT id, seizoen as season FROM intra_seizoen ORDER BY id DESC LIMIT 1;")->fetch();
         return $currentSeason["id"];
-    }
-
+    }    
+    /**
+     * Controle of er een seizoen bestaat met zelfde periode
+     *
+     * @param  string $period
+     * @return bool true indien periode reeds bestaat
+     */
+    public function existsWithPeriod($period){
+        $stmt = $this->db->prepare("SELECT COUNT(*) as num FROM intra_seizoen WHERE seizoen = ? ");
+        $stmt->execute([$period]);
+        $row = $stmt->fetch();
+        return $row["num"] > 0;
+    }    
+    /**
+     * Haal statistieken op voor gegeven seizoen
+     *
+     * @param  int $seasonId
+     * @return array spelerinfo met seizoenstatistieken
+     */
     public function getStatistics($seasonId)
     {
         $query = "SELECT IPLAYER.id, IPLAYER.voornaam AS firstname, IPLAYER.naam AS name, 
@@ -36,7 +58,13 @@ class SeasonRepository
         $stmt->execute([$seasonId]);
         return $stmt->fetchAll();
     }
-
+        
+    /**
+     * Maak een nieuw seizoen aan
+     *
+     * @param  string $period
+     * @return int id of toegevoegd seizoen
+     */
     public function create($period){
         $insertSeasonQuery = "INSERT INTO intra_seizoen (seizoen) VALUES (?)";
         $insertStmt = $this->db->prepare($insertSeasonQuery);

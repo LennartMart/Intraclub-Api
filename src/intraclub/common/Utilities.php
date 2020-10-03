@@ -2,7 +2,13 @@
 namespace intraclub\common;
 
 class Utilities
-{
+{    
+    /**
+     * Map spelerstatistieken naar array
+     *
+     * @param  array $playerStats
+     * @return array speler&statistiek object
+     */
     public static function mapToPlayerStatisticsObject($playerStats){
         return array(
             "id" => $playerStats["id"],
@@ -29,7 +35,13 @@ class Utilities
                 )
             )
         );
-    }
+    }    
+    /**
+     * Map naar wedstrijd array
+     *
+     * @param  mixed $match
+     * @return array wedstrijd
+     */
     public static function mapToMatchObject($match){
         return array(
             "home" => array (
@@ -74,13 +86,35 @@ class Utilities
                 "number" => intval($match["roundNumber"])
             ),                     
         );
-    }
+    }    
+    /**
+     * Trim setscore, zodanig dat firstscore maximaal 21 is.
+     *
+     * @param  int $firstScore
+     * @param  int $secondScore
+     * @return void
+     */
     private static function trimSets($firstScore, $secondScore)
     {
         return ($firstScore > 21 || $secondScore > 21) ? 21 / max($firstScore, $secondScore) * $firstScore : $firstScore;
-    }
-    public static function calculateMatchStatistics($home_firstPlayer_Id, $home_secondPlayer_Id, 
-        $away_firstPlayer_Id, $away_secondPlayer_Id, 
+    }    
+
+    /**
+     * Bereken matchstatistieken (winnaar, sets, ...)
+     *
+     * @param  int $home_firstPlayer_Id
+     * @param  int $home_secondPlayer_Id
+     * @param  int $away_firstPlayer_Id
+     * @param  int $away_secondPlayer_Id
+     * @param  int $firstSet_home
+     * @param  int $firstSet_away
+     * @param  int $secondSet_home
+     * @param  int $secondSet_away
+     * @param  int $thirdSet_home
+     * @param  int $thirdSet_away
+     * @return array matchststatistieken
+     */
+    public static function calculateMatchStatistics($home_firstPlayer_Id, $home_secondPlayer_Id, $away_firstPlayer_Id, $away_secondPlayer_Id, 
         $firstSet_home, $firstSet_away, $secondSet_home, $secondSet_away, $thirdSet_home, $thirdSet_away)
     {
         $setsWonHometeam = 0;
@@ -147,5 +181,15 @@ class Utilities
             "totalPoints" => $totalPointsLosingTeam + $totalPointsWinningTeam
         );
         return $return;
+    }
+    
+    /**
+     * Controle of waarde een getal is
+     *
+     * @param  mixed $value
+     * @return void
+     */
+    public static function isInt($value){
+        return filter_var($value, FILTER_VALIDATE_INT);
     }
 }

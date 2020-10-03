@@ -11,14 +11,25 @@ class RoundManager {
      *
      * @var RoundRepository
      */
-    protected $roundRepository;
+    protected $roundRepository;    
+    /**
+     * seasonRepository
+     *
+     * @var SeasonRepository
+     */
     protected $seasonRepository;
 
     public function __construct($db){
         $this->roundRepository = new RoundRepository($db);
         $this->seasonRepository = new SeasonRepository($db);
     }
-
+    
+    /**
+     * Creatie nieuw seizoen
+     *
+     * @param  string $date
+     * @return void
+     */
     public function create($date){
         $currentSeasonId = $this->seasonRepository->getCurrentSeasonId();
         $roundNumber = 1;
@@ -28,7 +39,13 @@ class RoundManager {
         }
         
         $this->roundRepository->create($currentSeasonId, $date, $roundNumber);
-    }
+    }    
+    /**
+     * Haal speeldag op met matchen
+     *
+     * @param  int $id
+     * @return array wedstrijden
+     */
     public function getByIdWithMatches($id){
         $roundInformation = $this->roundRepository->getWithMatches($id);
         $response = array();
@@ -47,22 +64,47 @@ class RoundManager {
         }
         return $response;
     }
-
+    
+    /**
+     * Haal alle speeldagen op
+     *
+     * @param  int $seasonId
+     * @return array speeldagen
+     */
     public function getAll($seasonId = null){
         if(empty($seasonId)){
             $seasonId = $this->seasonRepository->getCurrentSeasonId();
         }
         return $this->roundRepository->getAll($seasonId);
     }
-
+    
+    /**
+     * Haal speeldag op
+     *
+     * @param  int $id
+     * @return array speeldag
+     */
     public function getById($id){   
         return $this->roundRepository->getById($id);
     }
-
+    
+    /**
+     * Haal speeldag op per nummer/seizoen
+     *
+     * @param  int $seasonId
+     * @param  int $number
+     * @return array speeldag
+     */
     public function getBySeasonAndNumber($seasonId, $number){   
         return $this->roundRepository->getBySeasonAndNumber($seasonId, $number);
     }
-
+    
+    /**
+     * Haal laatst berekende speeldag op
+     *
+     * @param  int $seasonId
+     * @return array speeldag
+     */
     public function getLastCalculated($seasonId = null){
         return $this->roundRepository->getLastCalculated($seasonId);
     }

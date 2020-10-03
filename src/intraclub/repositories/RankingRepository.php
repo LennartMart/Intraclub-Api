@@ -13,7 +13,13 @@ class RankingRepository {
     public function __construct($db){
         $this->db = $db;
     }
-
+    
+    /**
+     * Haal ranking op wanneer er nog geen speeldagen zijn
+     *
+     * @param  int $seasonId
+     * @return array rankinginfo
+     */
     public function getRankingForNewSeason($seasonId){
         $query = "SELECT ROW_NUMBER() OVER (ORDER BY ISPS.basispunten DESC) AS rank,
             ISP.id AS id, ISP.naam AS name, ISP.voornaam as firstName,
@@ -27,7 +33,13 @@ class RankingRepository {
         $stmt->execute([$seasonId]); 
         return $stmt->fetchAll();
     }
-
+    
+    /**
+     * Haal ranking op na gegeven speeldag
+     *
+     * @param  int $roundId
+     * @return array rankinginfo
+     */
     public function getRankingAfterRound($roundId){
         $query ="SELECT ROW_NUMBER() OVER (ORDER BY ISPS.gemiddelde DESC) AS rank, ISP.id AS id, ISP.naam AS name, ISP.voornaam as firstName, 
             ISP.geslacht AS gender, ISP.is_veteraan as veteran, ISP.klassement AS ranking, ISP.jeugd as youth, ISPS.gemiddelde AS average
@@ -39,7 +51,14 @@ class RankingRepository {
         $stmt->execute([$roundId]);
         return $stmt->fetchAll();
     }
-
+    
+    /**
+     * Haal rankinggeschiedenis op voor een speler in een seizoen
+     *
+     * @param  int $playerId
+     * @param  int $seasonId
+     * @return array rankinginfo
+     */
     public function getRankingHistoryByPlayerAndSeason($playerId, $seasonId){
         $query = "SELECT * FROM (
                     SELECT ROW_NUMBER() OVER (PARTITION BY ISPS.speeldag_id ORDER BY ISPS.gemiddelde DESC) AS rank, 

@@ -108,5 +108,18 @@ class RoundManager {
     public function getLastCalculated($seasonId = null){
         return $this->roundRepository->getLastCalculated($seasonId);
     }
+    
+    /**
+     * Haal laatste ronde op van seizoen
+     *
+     * @param  mixed $seasonId
+     * @return array speeldag
+     */
+    public function getLast($seasonId = null){
+        if(empty($seasonId)){
+            $seasonId = $this->seasonRepository->getCurrentSeasonId();
+        }
+        return $this->roundRepository->getLast($seasonId);
+    }
 
 }

@@ -37,7 +37,7 @@ class StatisticsRepository {
                 gewonnen_matchen = 0
                 ";
         $insertPlayerSeasonStmt = $this->db->prepare($insertPlayerSeasonQuery);
-        $insertPlayerSeasonStmt->bindParam(':basePoints', $basePoints, PDO::PARAM_INT);
+        $insertPlayerSeasonStmt->bindParam(':basePoints', $basePoints, PDO::PARAM_STR);
         $insertPlayerSeasonStmt->bindParam(':seasonId', $seasonId, PDO::PARAM_INT);
         $insertPlayerSeasonStmt->bindParam(':playerId', $playerId, PDO::PARAM_INT);
         $insertPlayerSeasonStmt->execute();
@@ -102,7 +102,7 @@ class StatisticsRepository {
             ON DUPLICATE KEY UPDATE
                 gemiddelde = :average");
 
-        $updatePlayerSeasonStmt->bindParam(':average', $average, PDO::PARAM_INT);
+        $updatePlayerSeasonStmt->bindParam(':average', $average, PDO::PARAM_STR);
         $updatePlayerSeasonStmt->bindParam(':playerId', $playerId, PDO::PARAM_INT);
         $updatePlayerSeasonStmt->bindParam(':roundId', $roundId, PDO::PARAM_INT);
         $updatePlayerSeasonStmt->execute();

@@ -102,7 +102,7 @@ return function (App $app) {
     }
     */
     $app->post('/matches', function (Request $request, Response $response, array $args) {
-        //checkAccessRights();
+        checkAccessRights();
 
         $matchValidator = new MatchValidator($this->db);
         $matchManager = new MatchManager($this->db);
@@ -261,6 +261,11 @@ return function (App $app) {
         $seasonId = $queryParams["seasonId"];
 
         $data = $roundManager->getAll($seasonId);
+        return $response->withJson($data);
+    });
+    $app->get('/rounds/latest', function (Request $request, Response $response) {
+        $roundManager = new RoundManager($this->db);
+        $data = $roundManager->getLast();
         return $response->withJson($data);
     });
     $app->get('/rankings', function (Request $request, Response $response, array $args) {

@@ -27,7 +27,7 @@ class RankingRepository {
         FROM  intra_spelerperseizoen ISPS
         INNER JOIN intra_spelers ISP ON ISP.id = ISPS.speler_id
         WHERE ISPS.seizoen_id = ? AND ISP.is_lid = 1
-        ORDER BY average DESC;";
+        ORDER BY rank;";
 
         $stmt = $this->db->prepare($query);
         $stmt->execute([$seasonId]); 

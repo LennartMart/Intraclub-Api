@@ -53,7 +53,8 @@ class SeasonRepository
                 ISPS.speeldagen_aanwezig AS roundsPresent
             FROM intra_spelers IPLAYER
             INNER JOIN intra_spelerperseizoen ISPS ON ISPS.speler_id = IPLAYER.Id
-            WHERE ISPS.seizoen_id = ? AND IPLAYER.is_lid = 1";
+            WHERE ISPS.seizoen_id = ? AND IPLAYER.is_lid = 1
+            ORDER BY ISPS.speeldagen_aanwezig desc, ISPS.gewonnen_matchen desc, ISPS.basispunten desc";
         $stmt = $this->db->prepare($query);
         $stmt->execute([$seasonId]);
         return $stmt->fetchAll();

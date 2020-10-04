@@ -53,13 +53,15 @@ class RankingManager
         // If not => return latest season, and latest calculated round
         $seasonId = $this->checkSeason($seasonId);
         $round = $this->checkRound($roundId, $seasonId);
-
+        $ranking;
         // If round is still empty => no calculated round for current season
         if (empty($round)) {
-            return $this->rankingRepository->getRankingForNewSeason($seasonId);
+            $ranking = $this->rankingRepository->getRankingForNewSeason($seasonId);
+        }
+        else{
+            $ranking = $this->rankingRepository->getRankingAfterRound($round["id"]);
         }
 
-        $ranking = $this->rankingRepository->getRankingAfterRound($round["id"]);
         $previousRanking = array();
 
         if ($round["roundNumber"] > 1) {

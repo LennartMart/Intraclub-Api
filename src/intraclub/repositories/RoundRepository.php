@@ -76,7 +76,7 @@ class RoundRepository
             is_berekend = 1
         WHERE id = ?");
 
-        $updateRoundstmt->bindParam(1, $averageAbsent, PDO::PARAM_INT);
+        $updateRoundstmt->bindParam(1, $averageAbsent, PDO::PARAM_STR);
         $updateRoundstmt->bindParam(2, $id, PDO::PARAM_INT);
         $updateRoundstmt->execute();
     }    

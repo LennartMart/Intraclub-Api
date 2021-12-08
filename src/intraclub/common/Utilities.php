@@ -1,15 +1,17 @@
 <?php
+
 namespace intraclub\common;
 
 class Utilities
-{    
+{
     /**
      * Map spelerstatistieken naar array
      *
      * @param  array $playerStats
      * @return array speler&statistiek object
      */
-    public static function mapToPlayerStatisticsObject($playerStats){
+    public static function mapToPlayerStatisticsObject($playerStats)
+    {
         return array(
             "id" => $playerStats["id"],
             "firstName" => $playerStats["firstname"],
@@ -23,28 +25,29 @@ class Utilities
                 "sets" => array(
                     "won" => intval($playerStats["setsWon"]),
                     "lost" => $playerStats["setsPlayed"] - $playerStats["setsWon"],
-                    "total" => intval($playerStats["setsPlayed"]) 
+                    "total" => intval($playerStats["setsPlayed"])
                 ),
                 "matches" => array(
                     "won" => intval($playerStats["matchesWon"]),
                     "lost" => $playerStats["matchesPlayed"] - $playerStats["matchesWon"],
-                    "total" => intval($playerStats["matchesPlayed"]) 
+                    "total" => intval($playerStats["matchesPlayed"])
                 ),
                 "rounds" => array(
                     "present" => intval($playerStats["roundsPresent"])
                 )
             )
         );
-    }    
+    }
     /**
      * Map naar wedstrijd array
      *
      * @param  mixed $match
      * @return array wedstrijd
      */
-    public static function mapToMatchObject($match){
+    public static function mapToMatchObject($match)
+    {
         return array(
-            "home" => array (
+            "home" => array(
                 "firstPlayer" => array(
                     "id" => $match["home_firstPlayer_Id"],
                     "firstName" => $match["home_firstPlayer_firstName"],
@@ -54,9 +57,9 @@ class Utilities
                     "id" => $match["home_secondPlayer_Id"],
                     "firstName" => $match["home_secondPlayer_firstName"],
                     "name" => $match["home_secondPlayer_name"]
-                ),               
+                ),
             ),
-            "away" => array (
+            "away" => array(
                 "firstPlayer" => array(
                     "id" => $match["away_firstPlayer_Id"],
                     "firstName" => $match["away_firstPlayer_firstName"],
@@ -66,7 +69,7 @@ class Utilities
                     "id" => $match["away_secondPlayer_Id"],
                     "firstName" => $match["away_secondPlayer_firstName"],
                     "name" => $match["away_secondPlayer_name"]
-                ),               
+                ),
             ),
             "firstSet" => array(
                 "home" => intval($match["firstSet_home"]),
@@ -84,20 +87,20 @@ class Utilities
             "round" => array(
                 "id" => intval($match["roundId"]),
                 "number" => intval($match["roundNumber"])
-            ),                     
+            ),
         );
-    }    
+    }
     /**
      * Trim setscore, zodanig dat firstscore maximaal 21 is.
      *
      * @param  int $firstScore
      * @param  int $secondScore
-     * @return void
+     * @return int
      */
     private static function trimSets($firstScore, $secondScore)
     {
         return ($firstScore > 21 || $secondScore > 21) ? 21 / max($firstScore, $secondScore) * $firstScore : $firstScore;
-    }    
+    }
 
     /**
      * Bereken matchstatistieken (winnaar, sets, ...)
@@ -114,9 +117,18 @@ class Utilities
      * @param  int $thirdSet_away
      * @return array matchststatistieken
      */
-    public static function calculateMatchStatistics($home_firstPlayer_Id, $home_secondPlayer_Id, $away_firstPlayer_Id, $away_secondPlayer_Id, 
-        $firstSet_home, $firstSet_away, $secondSet_home, $secondSet_away, $thirdSet_home, $thirdSet_away)
-    {
+    public static function calculateMatchStatistics(
+        $home_firstPlayer_Id,
+        $home_secondPlayer_Id,
+        $away_firstPlayer_Id,
+        $away_secondPlayer_Id,
+        $firstSet_home,
+        $firstSet_away,
+        $secondSet_home,
+        $secondSet_away,
+        $thirdSet_home,
+        $thirdSet_away
+    ) {
         $setsWonHometeam = 0;
         $setsWonAwayteam = 0;
         $totalPointsWinningTeam = 0;
@@ -156,7 +168,7 @@ class Utilities
         if ($winner == 1) {
             $trimmedPointsWinningTeam = $totalHometeam;
             $trimmedPointsLosingTeam = $totalAwayteam;
-            $totalPointsWinningTeam =$firstSet_home + $secondSet_home + $thirdSet_home;
+            $totalPointsWinningTeam = $firstSet_home + $secondSet_home + $thirdSet_home;
             $totalPointsLosingTeam = $firstSet_away + $secondSet_away + $thirdSet_away;
             $winningTeamIds = array($home_firstPlayer_Id, $home_secondPlayer_Id);
             $losingTeamIds = array($away_firstPlayer_Id, $away_secondPlayer_Id);
@@ -182,14 +194,15 @@ class Utilities
         );
         return $return;
     }
-    
+
     /**
      * Controle of waarde een getal is
      *
      * @param  mixed $value
      * @return void
      */
-    public static function isInt($value){
+    public static function isInt($value)
+    {
         return filter_var($value, FILTER_VALIDATE_INT);
     }
 }

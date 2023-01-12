@@ -245,8 +245,8 @@ class MatchValidator
     private function checkSet($homeScore, $awayScore, $message, $errors)
     {
         //Uitzondering: 30-29
-        if (($homeScore === 30 && $awayScore === 29) ||
-            ($awayScore === 30 && $homeScore === 29)
+        if (($homeScore == 30 && $awayScore == 29) ||
+            ($awayScore == 30 && $homeScore == 29)
         ) {
             return $errors;
         }

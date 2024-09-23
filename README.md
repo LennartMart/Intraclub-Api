@@ -1,4 +1,4 @@
-# Intraclub Api
+# Intraclub Api - deprecated. Vervangen door https://github.com/BC-Landegem/Intraclub
 Dit project is de backend van https://www.bclandegem.be/intraclub .
 
 Hiermee beheren we de volledige intraclubapplicatie:
